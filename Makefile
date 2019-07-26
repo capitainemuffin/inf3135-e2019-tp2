@@ -41,4 +41,7 @@ push :
 	git commit -m 'commit et push automatique'
 	git push origin master
 
+valgrind : tp1
+	valgrind ./tp1
+
 

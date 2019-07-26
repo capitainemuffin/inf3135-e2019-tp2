@@ -1,0 +1,31 @@
+0 00 0 make (default:)       grep -c -e 'default :' -e 'default:' Makefile
+1 10 0 make                  make
+1 10 0 make data             make data
+1 10 0 make data (verif)     test $(ls -1 ./data | wc -l) -gt 2 && test -f ./data/alphabet.txt -o -f ./alphabet.txt
+1 10 0 make test             make test
+1 10 0 make clean            rm -rf ./ok ; make clean ; make clean
+1 10 0 make clean (verif)    test ! -f ./tp1.o && test ! -f ./tp1 && test ! -d ./data && test ! -f ./crypto-data.zip
+1 10 0 make resultat         grep -c -e 'resultat:' -e 'resultat :' Makefile
+1 10 0 README.md             test -f ./README.md
+1 10 0 compilation           gcc -Wall -pedantic -std=c11 -O2 -o tp1 tp1.c &> compilation.guy ; test ! -s compilation.guy
+0 00 0 variable              export FICHIER="${HOME}/depot/crypto-tp1/crypto-msg0" ; cp ${FICHIER}1.alphabet ./alphabet.txt
+1 10 1 c.retour 1            ./tp1
+1 10 2 c.retour 2            ./tp1 -c FRAG
+1 10 3 c.retour 3            ./tp1 -c FRAG12345678 -u
+1 10 4 c.retour 4            ./tp1 -c $(cat cp.txt) -k 1
+1 10 5 c.retour 5            ./tp1 -c $(cat cp.txt) $(cat ${FICHIER}1.action) -k $(cat ${FICHIER}1.cle) -i ok.txt
+1 10 6 c.retour 6            ./tp1 -c $(cat cp.txt) $(cat ${FICHIER}1.action) -k $(cat ${FICHIER}1.cle) -o ./ok/ok.txt < ${FICHIER}1.in
+1 10 7 c.retour 7            ./tp1 -c $(cat cp.txt) $(cat ${FICHIER}1.action) < ${FICHIER}1.in
+1 10 8 c.retour 8            ./tp1 -c $(cat cp.txt) $(cat ${FICHIER}1.action) -i ${FICHIER}1.in -k $(cat ${FICHIER}1.cle) -a ./ok/
+1 90 0 test 1 exe            ./tp1 -c $(cat cp.txt) -i ${FICHIER}1.in -o res1.guy $(cat ${FICHIER}1.action) -k $(cat ${FICHIER}1.cle)
+1 10 0 test 1 res            diff --brief -b res1.guy ${FICHIER}1.out
+0 00 0 repertoire            mkdir ok ; cp ${FICHIER}2.alphabet ./ok/alphabet.txt
+1 90 0 test 2 exe            ./tp1 -c $(cat cp.txt) < ${FICHIER}2.in > res2.guy $(cat ${FICHIER}2.action) -k $(cat ${FICHIER}2.cle) -a ./ok
+1 10 0 test 2 res            diff --brief -b res2.guy ${FICHIER}2.out
+0 00 0 repertoire            cp ${FICHIER}3.alphabet ./alphabet.txt
+1 90 0 test 3 exe            ./tp1 -c $(cat cp.txt) -a ./ < ${FICHIER}3.in -k $(cat ${FICHIER}3.cle) -o res3.guy $(cat ${FICHIER}3.action)
+1 10 0 test 3 res            diff --brief -b res3.guy ${FICHIER}3.out
+1 10 0 c.retour > 8          ./tp1 -c FRAG12345678 -e -d -k 1 ; test 8 -lt $?
+0 00 0 cp alpha              cp ${FICHIER}4.alphabet ./alphabet.txt
+1 90 0 test 4 exe            ./tp1 -c FRAG12345678 $(cat ${FICHIER}4.action) -k $(cat ${FICHIER}4.cle) -i ${FICHIER}4.in > res4.guy
+1 10 0 test 4 res            diff --brief -b res4.guy ${FICHIER}4.out

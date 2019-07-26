@@ -37,125 +37,148 @@ typedef struct {
 
 void validation_args(int argc, char *argv[], Arguments *arguments) {
 
+    //ajouter option -b (bruteforce) et -l (repertoire des dictionnaires)
+    // code de retour 9 (les options obligatoires ne sont pas (toutes) présentes ou mal utilisées;)
     for (int i = 1; i < argc; i++) {
 
-        if (strcmp(argv[i], "-c") == 0) {
+        #ifdef DEBUG
+        printf('%s\n', argv[i]);
+        #endif
 
-            if (i + 1 < argc) {
+        if(argv[i][0] == '-' && argv[i][2] == '\0'){
 
-                arguments->code_perm = argv[i + 1];
+            switch(argv[i][1]){
 
-            }
+                case 'c': {
 
-            if (i + 1 >= argc || strlen(arguments->code_perm) != 12) exit(2);
-            
-            i++;
+                    if (i + 1 < argc && strlen(argv[i + 1]) == 12) {
+                        arguments->code_perm = argv[i + 1];
+                        i++;                    
+                    } else { exit(2); } 
+                    break;
 
-        } else if (strcmp(argv[i], "-i") == 0) {
+                }
 
-            if (i + 1 < argc) {
+                case 'i' : {
 
-                arguments->entree = fopen(argv[i + 1], "r");
+                    if (i + 1 < argc) {
+                        arguments->entree = fopen(argv[i + 1], "r");
+                        i++;
+                    }
+                    if (i + 1 >= argc || arguments->entree == NULL) exit(5);
+                    break;
+                    
+                }
 
-            }
+                case 'o' : {
 
-            if (i + 1 >= argc || arguments->entree == NULL) exit(5);
-            
+                    if (i + 1 < argc) {
+                        arguments->sortie = fopen(argv[i + 1], "w");
+                        i++;
+                    }
+                    if (i + 1 >= argc || arguments->sortie == NULL) exit(6);
+                    break;
 
-            i++;
+                }
 
-        } else if (strcmp(argv[i], "-o") == 0) {
+                case 'd' : {
 
-            if (i + 1 < argc) {
+                    arguments->mode.present = true;
+                    arguments->mode.action = DECRYPT;
+                    break;
 
-                arguments->sortie = fopen(argv[i + 1], "w");
+                }
 
-            }
+                case 'e' : {
 
-            if (i + 1 >= argc || arguments->sortie == NULL) exit(6);
+                    arguments->mode.present = true;
+                    arguments->mode.action = ENCRYPT;
+                    break;
 
-            i++;
+                }
 
-        } else if (strcmp(argv[i], "-d") == 0) {
+                case 'k' : {
 
-            arguments->mode.present = true;
-            arguments->mode.action = DECRYPT;
+                    if (i + 1 < argc) {
 
-        } else if (strcmp(argv[i], "-e") == 0) {
+                        arguments->cle.present = true;
+                        char *ptr = argv[i + 1];
+                        bool negatif = false;
 
-            arguments->mode.present = true;
-            arguments->mode.action = ENCRYPT;
+                        for (int j = 0; j < strlen(argv[i + 1]); j++) {
 
-        } else if (strcmp(argv[i], "-k") == 0) {
+                            if (ptr[j] == '-') {
 
-            if (i + 1 < argc) {
+                                if (negatif) {
 
-                arguments->cle.present = true;
-                char *ptr = argv[i + 1];
-                bool negatif = false;
+                                    arguments->cle.present = false;
+                                    break;
 
-                for (int j = 0; j < strlen(argv[i + 1]); j++) {
+                                    } else {
 
-                    if (ptr[j] == '-') {
+                                        negatif = true;
 
-                        if (negatif) {
+                                    }
 
-                            arguments->cle.present = false;
-                            break;
+                            } else if (!isdigit(ptr[j])) {
 
-                        } else {
+                                arguments->cle.present = false;
+                                break;
 
-                            negatif = true;
+                            }
 
                         }
 
-                    } else if (!isdigit(ptr[j])) {
+                        if (arguments->cle.present) {
 
-                        arguments->cle.present = false;
-                        break;
+                            arguments->cle.cle = atoi(argv[i + 1]);
 
+                        }
+
+                        i++;
+
+                    }  
+                    
+                    break;                
+
+                }
+
+                case 'a' : {
+
+                    if (i + 1 < argc) {
+
+                        if (argv[i + 1][strlen(argv[i + 1]) - 1] != '/') {
+
+                            arguments->alphabet = fopen(argv[i + 1], "r");
+
+                        } else {
+
+                            char *chemin = malloc(strlen(argv[i + 1]) + strlen("alphabet.txt") + 1);
+                            strcpy(chemin, argv[i + 1]);
+                            strcat(chemin, "alphabet.txt");
+                            arguments->alphabet = fopen(chemin, "r");
+                            free(chemin);
+
+                        }
+
+                        i++;
                     }
-                }
 
-                if (arguments->cle.present) {
-
-                    arguments->cle.cle = atoi(argv[i + 1]);
+                    break;
 
                 }
 
-                i++;
+                default : exit(3);
 
             }
 
-        } else if (strcmp(argv[i], "-a") == 0) {
+        } else { exit(3); }
 
-            if (i + 1 < argc) {
+    } 
 
-                if (argv[i + 1][strlen(argv[i + 1]) - 1] != '/') {
-
-                    arguments->alphabet = fopen(argv[i + 1], "r");
-
-                } else {
-
-                    char *chemin = malloc(strlen(argv[i + 1]) + strlen("alphabet.txt") + 1);
-                    strcpy(chemin, argv[i + 1]);
-                    strcat(chemin, "alphabet.txt");
-                    arguments->alphabet = fopen(chemin, "r");
-                    free(chemin);
-
-                }
-
-                i++;
-            }
-
-        } else {
-
-            exit(3);
-
-        }
-
-    }
-
+    /**
+    * Pas de -C ou aucun argument -> code 1 
+    **/
     if (arguments->code_perm == NULL) {
 
         fprintf(stderr, "Usage: %s <-c CODEpermanent> <-d | -e> <-k valeur> [-i fichier.in] [-o fichier.out] [-a chemin]\n",
