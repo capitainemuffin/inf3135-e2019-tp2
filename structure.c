@@ -16,9 +16,9 @@ Arguments_t* initArguments() {
 
 void freeArguments(Arguments_t* arguments){
 
-    fclose(arguments->entree);
-    fclose(arguments->sortie);
-    fclose(arguments->alphabet);
+    if(arguments->entree) fclose(arguments->entree);
+    if(arguments->sortie) fclose(arguments->sortie);
+    if(arguments->alphabet) fclose(arguments->alphabet);
 
     free(arguments);
 
