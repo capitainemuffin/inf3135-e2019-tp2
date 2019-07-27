@@ -11,20 +11,23 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
     // code de retour 9 (les options obligatoires ne sont pas (toutes) présentes ou mal utilisées;)
     for (int i = 1; i < argc; i++) {
 
-        #ifdef DEBUG
+#ifdef DEBUG
         printf('%s\n', argv[i]);
-        #endif
+#endif
 
-        if(argv[i][0] == '-' && argv[i][2] == '\0'){
+        if (argv[i][0] == '-' && argv[i][2] == '\0') {
 
-            switch(argv[i][1]){
+            switch (argv[i][1]) {
 
                 case 'c': {
 
                     if (i + 1 < argc && strlen(argv[i + 1]) == 12) {
                         arguments->code_perm = argv[i + 1];
-                        i++;                    
-                    } else { exit(2); } 
+                        i++;
+                    } else {
+                        freeArguments(arguments);
+                        exit(2);
+                    }
                     break;
 
                 }
@@ -32,16 +35,22 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                 case 'i' : {
 
                     if (i + 1 < argc) arguments->entree = fopen(argv[i + 1], "r");
-                    if (i + 1 >= argc || arguments->entree == NULL) exit(5);
+                    if (i + 1 >= argc || arguments->entree == NULL) {
+                        freeArguments(arguments);
+                        exit(5);
+                    }
                     i++;
                     break;
-                    
+
                 }
 
                 case 'o' : {
 
                     if (i + 1 < argc) arguments->sortie = fopen(argv[i + 1], "w");
-                    if (i + 1 >= argc || arguments->sortie == NULL) exit(6);
+                    if (i + 1 >= argc || arguments->sortie == NULL) {
+                        freeArguments(arguments);
+                        exit(6);
+                    }
                     i++;
                     break;
 
@@ -49,7 +58,10 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                 case 'd' : {
 
-                    if(arguments->mode.present) exit(11);
+                    if (arguments->mode.present) {
+                        freeArguments(arguments);
+                        exit(11);
+                    }
                     arguments->mode.present = true;
                     arguments->mode.action = DECRYPT;
                     break;
@@ -58,7 +70,10 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                 case 'e' : {
 
-                    if(arguments->mode.present) exit(11);
+                    if (arguments->mode.present) {
+                        freeArguments(arguments);
+                        exit(11);
+                    }
                     arguments->mode.present = true;
                     arguments->mode.action = ENCRYPT;
                     break;
@@ -82,11 +97,11 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                                     arguments->cle.present = false;
                                     break;
 
-                                    } else {
+                                } else {
 
-                                        negatif = true;
+                                    negatif = true;
 
-                                    }
+                                }
 
                             } else if (!isdigit(ptr[j])) {
 
@@ -105,9 +120,9 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                         i++;
 
-                    }  
-                    
-                    break;                
+                    }
+
+                    break;
 
                 }
 
@@ -140,34 +155,54 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                 }
 
-                default : exit(3);
+                default : {
+                    freeArguments(arguments);
+                    exit(3);
+                }
 
             }
 
-        } else { exit(3); }
+        } else {
+            freeArguments(arguments);
+            exit(3);
+        }
 
-    } 
+    }
 
     /**
     * Pas de -C ou aucun argument -> code 1 
     **/
     if (arguments->code_perm == NULL) {
 
-        fprintf(stderr, "Usage: %s <-c CODEpermanent> <-d | -e> <-k valeur> [-i fichier.in] [-o fichier.out] [-a chemin]\n",
-               argv[0]);
+        fprintf(stderr,
+                "Usage: %s <-c CODEpermanent> <-d | -e> <-k valeur> [-i fichier.in] [-o fichier.out] [-a chemin]\n",
+                argv[0]);
+        freeArguments(arguments);
         exit(1);
 
     }
 
-    if (!arguments->mode.present) exit(4);
-    if (!arguments->cle.present) exit(7);
-    if (arguments->alphabet == NULL) exit(8);
-    
+    if (!arguments->mode.present) {
+        freeArguments(arguments);
+        exit(4);
+    }
+
+
+    if (!arguments->cle.present) {
+        freeArguments(arguments);
+        exit(7);
+    }
+
+    if (arguments->alphabet == NULL) {
+        freeArguments(arguments);
+        exit(8);
+    }
+
 }
 
 int main(int argc, char **argv) {
 
-    Arguments_t* arguments = initArguments();
+    Arguments_t *arguments = initArguments();
     arguments->alphabet = fopen("alphabet.txt", "r");
 
     validation_args(argc, argv, arguments);

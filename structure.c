@@ -26,7 +26,6 @@ void freeArguments(Arguments_t* arguments){
 
     free(arguments);
 
-
 }
 
 
