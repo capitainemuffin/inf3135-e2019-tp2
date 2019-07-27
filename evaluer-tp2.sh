@@ -1,5 +1,3 @@
-#!/bin/bash
-# evaluer-tp2.sh
 if [ -z $1 ]
 then
   correction=inf3135-e2019-tp1.correction
@@ -15,16 +13,18 @@ then
   exit 1
 fi
 
-IFS=$'\t'
-
-while read -r line; do
+IFS=$'\n'
+for line in `cat ${correction}`; do
 
 	points=`echo $line | cut -d ' ' -f1`
 	temps_max=`echo $line | cut -d ' ' -f2`
 	code_retour=`echo $line | cut -d ' ' -f3`
 	description=${line:7:22}
 	commande=${line:29};
+	timeout ${temps_max} eval $commande &> /dev/null
 
-	$commande;
+	test $? -eq ${code_retour} && echo Réussi : ${points} pts || echo Erreur; 
 
-done < ${correction}
+done
+
+echo "Note totale" 
