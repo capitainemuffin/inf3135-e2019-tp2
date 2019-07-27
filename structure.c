@@ -20,10 +20,6 @@ void freeArguments(Arguments_t* arguments){
     fclose(arguments->sortie);
     fclose(arguments->alphabet);
 
-    arguments->entree = stdin;
-    arguments->sortie = stdout;
-    arguments->alphabet = NULL;
-
     free(arguments);
 
 }
