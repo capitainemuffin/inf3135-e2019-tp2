@@ -8,6 +8,11 @@
    - Code d'erreur `11` si les options `-d` et `-e` sont présentes en même temps.
    - Alphabet : si par exemple la commande est `-a ./ok`, le programme tente d'ouvrir `./ok/alphabet.txt` au lieu de `./ok`.
    - Retrait de toute les variables de fichiers dans le `Makefile` pour mettre `FICHIER = ./data/crypto-msg0`.
+   - La commande `make data` fait une copie de `./data/crypto-msg01.alphabet` nommée `./data/alphabet.txt`.
+
+   ## Ajouts de fonctionnalités
+
+   
 
    # Travail Pratique 1
 

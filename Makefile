@@ -25,6 +25,7 @@ data :
 	if [ ! -d "data" ]; then mkdir data; fi
 	mv crypto-data.zip data/
 	unzip -o data/crypto-data.zip -d data/
+	cp $(FICHIER)1.alphabet ./data/alphabet.txt
 	rm -f data/crypto-data.zip
 
 resultat : note-du-tp.txt
