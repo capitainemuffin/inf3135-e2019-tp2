@@ -167,50 +167,45 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
 int main(int argc, char **argv) {
 
-    Arguments_t arguments;
-    arguments.mode.present = false;
-    arguments.cle.present = false;
-    arguments.entree = stdin;
-    arguments.sortie = stdout;
-    arguments.alphabet = fopen("alphabet.txt", "r");
-    arguments.code_perm = NULL;
+    Arguments_t* arguments = initArguments();
+    arguments->alphabet = fopen("alphabet.txt", "r");
 
-    validation_args(argc, argv, &arguments);
-    fseek(arguments.alphabet, -1, SEEK_END);
+    validation_args(argc, argv, arguments);
+    fseek(arguments->alphabet, -1, SEEK_END);
 
-    if (fgetc(arguments.alphabet) == '\n') {
+    if (fgetc(arguments->alphabet) == '\n') {
 
-        fseek(arguments.alphabet, -2, SEEK_END);
+        fseek(arguments->alphabet, -2, SEEK_END);
 
     } else {
 
-        fseek(arguments.alphabet, -1, SEEK_END);
+        fseek(arguments->alphabet, -1, SEEK_END);
 
     }
 
-    long taille = ftell(arguments.alphabet);
+    long taille = ftell(arguments->alphabet);
 
-    if (arguments.mode.action == DECRYPT) {
+    if (arguments->mode.action == DECRYPT) {
 
-        arguments.cle.cle = -(arguments.cle.cle);
+        arguments->cle.cle = -(arguments->cle.cle);
 
     }
 
     int old;
     int new;
 
-    while ((old = fgetc(arguments.entree)) != EOF) {
+    while ((old = fgetc(arguments->entree)) != EOF) {
 
         int alphabet;
         bool trouve = false;
-        fseek(arguments.alphabet, 0, SEEK_SET);
+        fseek(arguments->alphabet, 0, SEEK_SET);
 
-        while ((alphabet = fgetc(arguments.alphabet)) != EOF && alphabet != '\n') {
+        while ((alphabet = fgetc(arguments->alphabet)) != EOF && alphabet != '\n') {
 
             if (alphabet == old) {
 
                 trouve = true;
-                fseek(arguments.alphabet, -1, SEEK_CUR);
+                fseek(arguments->alphabet, -1, SEEK_CUR);
                 break;
 
             }
@@ -219,27 +214,27 @@ int main(int argc, char **argv) {
 
         if (trouve) {
             int i = 0;
-            if (arguments.cle.cle < 0) {
+            if (arguments->cle.cle < 0) {
 
-                while (i > arguments.cle.cle) {
+                while (i > arguments->cle.cle) {
 
-                    if (ftell(arguments.alphabet) == 0) {
+                    if (ftell(arguments->alphabet) == 0) {
 
-                        fseek(arguments.alphabet, -1, SEEK_END);
+                        fseek(arguments->alphabet, -1, SEEK_END);
 
-                        if (fgetc(arguments.alphabet) == '\n') {
+                        if (fgetc(arguments->alphabet) == '\n') {
 
-                            fseek(arguments.alphabet, -2, SEEK_CUR);
+                            fseek(arguments->alphabet, -2, SEEK_CUR);
 
                         } else {
 
-                            fseek(arguments.alphabet, -1, SEEK_CUR);
+                            fseek(arguments->alphabet, -1, SEEK_CUR);
 
                         }
 
                     } else {
 
-                        fseek(arguments.alphabet, -1, SEEK_CUR);
+                        fseek(arguments->alphabet, -1, SEEK_CUR);
 
                     }
 
@@ -248,15 +243,15 @@ int main(int argc, char **argv) {
 
             } else {
 
-                while (i < arguments.cle.cle) {
+                while (i < arguments->cle.cle) {
 
-                    if (ftell(arguments.alphabet) == taille) {
+                    if (ftell(arguments->alphabet) == taille) {
 
-                        fseek(arguments.alphabet, 0, SEEK_SET);
+                        fseek(arguments->alphabet, 0, SEEK_SET);
 
                     } else {
 
-                        fseek(arguments.alphabet, 1, SEEK_CUR);
+                        fseek(arguments->alphabet, 1, SEEK_CUR);
                     }
 
                     i++;
@@ -264,7 +259,7 @@ int main(int argc, char **argv) {
 
             }
 
-            new = fgetc(arguments.alphabet);
+            new = fgetc(arguments->alphabet);
 
         } else {
 
@@ -272,13 +267,11 @@ int main(int argc, char **argv) {
 
         }
 
-        fprintf(arguments.sortie, "%c", new);
+        fprintf(arguments->sortie, "%c", new);
 
     }
 
-    fclose(arguments.entree);
-    fclose(arguments.sortie);
-    fclose(arguments.alphabet);
+    freeArguments(arguments);
 
     return 0;
 }

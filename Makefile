@@ -4,25 +4,30 @@ FICHIER = ./data/crypto-msg0
 
 .PHONY : data clean default test resultat push
 
-default : tp1
+default : tp2
 
-tp1 : tp1.o
-	gcc tp1.o -o tp1 $(options)
+tp2 : tp2.o structure.o outils.o
+	gcc $^ -o $@ $(options)
 
-tp1.o : tp1.c structure.h outils.h
-	gcc tp1.c -c -o tp1.o $(options)
+tp2.o : tp2.c
+	gcc $< -c -o $@ $(options)
+
+structure.o : structure.c structure.h
+	gcc $< -c -o $@ $(options)
+
+outils.o : outils.c outils.h
+	gcc $< -c -o $@ $(options)
 
 clean : 
-	rm -fr *.o tp1 alphabet.txt data *.sof
+	rm -fr *.o tp2 alphabet.txt data *.sof
 
 cleanguy :
 	make clean
 	rm -fr ok *.guy
-	rm alphabet.txt
 
-test : tp1
+test : tp2
 	cp $(FICHIER)1.alphabet alphabet.txt
-	./tp1 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof
+	./tp2 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof
 	diff $(FICHIER)1.out res1.sof
 
 data :
@@ -43,7 +48,7 @@ push :
 	git commit -m 'commit et push automatique'
 	git push origin master
 
-valgrind : tp1
-	valgrind ./tp1
+valgrind : tp2
+	valgrind ./tp2
 
 

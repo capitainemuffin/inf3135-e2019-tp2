@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
+
 /**
 * Interface des structures de données
 **/ 
@@ -35,5 +39,8 @@ typedef struct Arguments_s{
     FILE *sortie;
 
 } Arguments_t;
+
+Arguments_t* initArguments();
+void freeArguments(Arguments_t* arguments);
 
 #endif
