@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "structure.h"
+#include "outils.h"
 
 void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
@@ -60,7 +61,7 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                     if (arguments->mode.present) {
                         freeArguments(arguments);
-                        exit(11);
+                        exit(9);
                     }
                     arguments->mode.present = true;
                     arguments->mode.action = DECRYPT;
@@ -72,7 +73,7 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                     if (arguments->mode.present) {
                         freeArguments(arguments);
-                        exit(11);
+                        exit(9);
                     }
                     arguments->mode.present = true;
                     arguments->mode.action = ENCRYPT;
@@ -155,6 +156,41 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                 }
 
+                case 'b' : {
+
+                    if(arguments->mode.present) {
+                        freeArguments(arguments);
+                        exit(9);
+                    }
+
+                    arguments->mode.present = true;
+                    arguments->mode.action = BRUTEFORCE;
+                    break;
+                }
+
+                case 'l' : {
+
+                    char *chemin;
+                    if (argv[i + 1][strlen(argv[i + 1]) - 1] != '/') {
+
+                        chemin = malloc(strlen(argv[i + 1]) + strlen("/alphabet.txt") + 1);
+                        strcpy(chemin, argv[i + 1]);
+                        strcat(chemin, "/alphabet.txt");
+                        arguments->alphabet = fopen(chemin, "r");
+
+                    } else {
+
+                        chemin = malloc(strlen(argv[i + 1]) + strlen("alphabet.txt") + 1);
+                        strcpy(chemin, argv[i + 1]);
+                        strcat(chemin, "alphabet.txt");
+                        arguments->alphabet = fopen(chemin, "r");
+
+                    }
+                    free(chemin);
+                    i++;
+                    break;
+                }
+
                 default : {
                     freeArguments(arguments);
                     exit(3);
@@ -169,9 +205,6 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
     }
 
-    /**
-    * Pas de -C ou aucun argument -> code 1 
-    **/
     if (arguments->code_perm == NULL) {
 
         fprintf(stderr,
@@ -188,14 +221,30 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
     }
 
 
-    if (!arguments->cle.present) {
+    if (arguments->mode.action != BRUTEFORCE && !arguments->cle.present) {
         freeArguments(arguments);
         exit(7);
+
     }
 
     if (arguments->alphabet == NULL) {
         freeArguments(arguments);
         exit(8);
+    }
+
+    if(arguments->mode.action != BRUTEFORCE && arguments->dictionnaires.nbr_dictionnaires > 0) {
+        freeArguments(arguments);
+        exit(9);
+    }
+
+    if(arguments->mode.action == BRUTEFORCE &&  arguments->dictionnaires.nbr_dictionnaires == 0) {
+        freeArguments(arguments);
+        exit(9);
+    }
+
+    if(arguments->mode.action == BRUTEFORCE && arguments->cle.present) {
+        freeArguments(arguments);
+        exit(9);
     }
 
 }

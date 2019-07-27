@@ -9,10 +9,13 @@
    - Alphabet : si par exemple la commande est `-a ./ok`, le programme tente d'ouvrir `./ok/alphabet.txt` au lieu de `./ok`.
    - Retrait de toute les variables de fichiers dans le `Makefile` pour mettre `FICHIER = ./data/crypto-msg0`.
    - La commande `make data` fait une copie de `./data/crypto-msg01.alphabet` nommée `./data/alphabet.txt`.
+   - Lorsqu'une erreur est rencontrée, le programme appelle `freeArguments(Arguments_t*)` avant de quitter afin d'éviter
+   les fuites de mémoire.
 
    ## Ajouts de fonctionnalités
 
-   - Déplacement des structures de données vers le fichier `structure.h` et `structure.c`.
+   - Déplacement des structures de données vers les fichiers `structure.h` et `structure.c`.
+   - Ajout de la fonction `Arguments_t* initArguments()` qui renvoi un pointeur vers un objet `Argument_t` qui contient tous les arguments.
 
    # Travail Pratique 1
 

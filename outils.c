@@ -1,1 +1,1 @@
-void analyser();
+#include "outils.h"
