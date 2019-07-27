@@ -9,11 +9,16 @@ default : tp1
 tp1 : tp1.o
 	gcc tp1.o -o tp1 $(options)
 
-tp1.o : tp1.c
+tp1.o : tp1.c structure.h outils.h
 	gcc tp1.c -c -o tp1.o $(options)
 
 clean : 
-	rm -fr *.o tp1 alphabet.txt data
+	rm -fr *.o tp1 alphabet.txt data *.sof
+
+cleanguy :
+	make clean
+	rm -fr ok *.guy
+	rm alphabet.txt
 
 test : tp1
 	cp $(FICHIER)1.alphabet alphabet.txt

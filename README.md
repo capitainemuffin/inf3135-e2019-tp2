@@ -12,7 +12,7 @@
 
    ## Ajouts de fonctionnalités
 
-   
+   - Déplacement des structures de données vers le fichier `structure.h` et `structure.c`.
 
    # Travail Pratique 1
 

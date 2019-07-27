@@ -3,39 +3,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include "structure.h"
 
-typedef enum {
-
-    ENCRYPT, DECRYPT
-
-} Action;
-
-typedef struct {
-
-    bool present;
-    Action action;
-
-} Mode;
-
-typedef struct {
-
-    bool present;
-    int cle;
-
-} Cle;
-
-typedef struct {
-    
-    char *code_perm;
-    Cle cle;
-    Mode mode;
-    FILE *alphabet;
-    FILE *entree;
-    FILE *sortie;
-
-} Arguments;
-
-void validation_args(int argc, char *argv[], Arguments *arguments) {
+void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
     //ajouter option -b (bruteforce) et -l (repertoire des dictionnaires)
     // code de retour 9 (les options obligatoires ne sont pas (toutes) présentes ou mal utilisées;)
@@ -103,7 +73,7 @@ void validation_args(int argc, char *argv[], Arguments *arguments) {
                         char *ptr = argv[i + 1];
                         bool negatif = false;
 
-                        for (int j = 0; j < strlen(argv[i + 1]); j++) {
+                        for (unsigned long j = 0; j < strlen(argv[i + 1]); j++) {
 
                             if (ptr[j] == '-') {
 
@@ -159,7 +129,7 @@ void validation_args(int argc, char *argv[], Arguments *arguments) {
                             strcpy(chemin, argv[i + 1]);
                             strcat(chemin, "alphabet.txt");
                             arguments->alphabet = fopen(chemin, "r");
-                            
+
                         }
 
                         free(chemin);
@@ -197,7 +167,7 @@ void validation_args(int argc, char *argv[], Arguments *arguments) {
 
 int main(int argc, char **argv) {
 
-    Arguments arguments;
+    Arguments_t arguments;
     arguments.mode.present = false;
     arguments.cle.present = false;
     arguments.entree = stdin;
@@ -218,7 +188,7 @@ int main(int argc, char **argv) {
 
     }
 
-    int taille = ftell(arguments.alphabet);
+    long taille = ftell(arguments.alphabet);
 
     if (arguments.mode.action == DECRYPT) {
 
@@ -226,12 +196,12 @@ int main(int argc, char **argv) {
 
     }
 
-    char old;
-    char new;
+    int old;
+    int new;
 
     while ((old = fgetc(arguments.entree)) != EOF) {
 
-        char alphabet;
+        int alphabet;
         bool trouve = false;
         fseek(arguments.alphabet, 0, SEEK_SET);
 

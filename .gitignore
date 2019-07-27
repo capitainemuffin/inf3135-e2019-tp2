@@ -1,3 +1,6 @@
 *.o
 tp1
 data/
+.idea/
+CMakeLists.txt
+cmake-build-debug/
