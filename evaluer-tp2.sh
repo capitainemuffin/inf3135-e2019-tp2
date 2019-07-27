@@ -14,6 +14,11 @@ then
 fi
 
 IFS=$'\n'
+index=1
+note=0
+code_perm=`cat cp.txt`
+repertoire=`pwd | rev | cut -d' ' -f1 | rev`
+
 for line in `cat ${correction}`; do
 
 	points=`echo $line | cut -d ' ' -f1`
@@ -21,10 +26,14 @@ for line in `cat ${correction}`; do
 	code_retour=`echo $line | cut -d ' ' -f3`
 	description=${line:7:22}
 	commande=${line:29};
-	timeout ${temps_max} eval $commande &> /dev/null
 
-	test $? -eq ${code_retour} && echo Réussi : ${points} pts || echo Erreur; 
-
+	#
+	#
+	# NE PAS OUBLIER D'AJOUTER TIMEOUT
+	#
+	eval $commande &> /dev/null
+	test $? -eq ${code_retour} && echo $index : réussi : ${points} pts && note=$((note + points)) || echo $index : echec; 
+	index=$((index + 1))
 done
 
-echo "Note totale" 
+echo "Note (total) pour $code_perm dans ${repertoire}: $note" 

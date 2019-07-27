@@ -1,6 +1,15 @@
     ***** documenter prises de décisions importantes 
 
-   # Travail pratique 2
+   # Travail Pratique 2
+
+   ## Corrections depuis le TP1
+
+   - Le programme ne s'arrête plus dès qu'il rencontre un `\n` dans le fichier en entrée.
+   - Code d'erreur `11` si les options `-d` et `-e` sont présentes en même temps.
+   - Alphabet : si par exemple la commande est `-a ./ok`, le programme tente d'ouvrir `./ok/alphabet.txt` au lieu de `./ok`.
+   - Retrait de toute les variables de fichiers dans le `Makefile` pour mettre `FICHIER = ./data/crypto-msg0`.
+
+   # Travail Pratique 1
 
    ## Description
 

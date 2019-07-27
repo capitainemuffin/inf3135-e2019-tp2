@@ -1,10 +1,6 @@
 options=-Wall -pedantic -std=c11
 CP = $(shell cat cp.txt)
-IN = data/crypto-msg01.in
-OUT = data/crypto-msg01.out
-OUT_TEST = data/crypto-msg01.test
-CLE = $(shell cat data/crypto-msg01.cle)
-action = $(shell cat data/crypto-msg01.action)
+FICHIER = ./data/crypto-msg0
 
 .PHONY : data clean default test resultat push
 
@@ -20,9 +16,9 @@ clean :
 	rm -fr *.o tp1 alphabet.txt data
 
 test : tp1
-	cp data/crypto-msg01.alphabet data/alphabet.txt
-	./tp1 -c $(CP) $(action) -k $(CLE) -i $(IN) -o $(OUT_TEST) -a ./data/
-	diff $(OUT) $(OUT_TEST)
+	cp $(FICHIER)1.alphabet alphabet.txt
+	./tp1 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof
+	diff $(FICHIER)1.out res1.sof
 
 data :
 	curl https://www.github.com/guyfrancoeur/INF3135_E2019_TP/raw/master/crypto-data.zip -sLO -o crypto-data.zip

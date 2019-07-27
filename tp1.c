@@ -61,28 +61,25 @@ void validation_args(int argc, char *argv[], Arguments *arguments) {
 
                 case 'i' : {
 
-                    if (i + 1 < argc) {
-                        arguments->entree = fopen(argv[i + 1], "r");
-                        i++;
-                    }
+                    if (i + 1 < argc) arguments->entree = fopen(argv[i + 1], "r");
                     if (i + 1 >= argc || arguments->entree == NULL) exit(5);
+                    i++;
                     break;
                     
                 }
 
                 case 'o' : {
 
-                    if (i + 1 < argc) {
-                        arguments->sortie = fopen(argv[i + 1], "w");
-                        i++;
-                    }
+                    if (i + 1 < argc) arguments->sortie = fopen(argv[i + 1], "w");
                     if (i + 1 >= argc || arguments->sortie == NULL) exit(6);
+                    i++;
                     break;
 
                 }
 
                 case 'd' : {
 
+                    if(arguments->mode.present) exit(11);
                     arguments->mode.present = true;
                     arguments->mode.action = DECRYPT;
                     break;
@@ -91,6 +88,7 @@ void validation_args(int argc, char *argv[], Arguments *arguments) {
 
                 case 'e' : {
 
+                    if(arguments->mode.present) exit(11);
                     arguments->mode.present = true;
                     arguments->mode.action = ENCRYPT;
                     break;
@@ -147,20 +145,24 @@ void validation_args(int argc, char *argv[], Arguments *arguments) {
 
                     if (i + 1 < argc) {
 
+                        char *chemin;
                         if (argv[i + 1][strlen(argv[i + 1]) - 1] != '/') {
 
-                            arguments->alphabet = fopen(argv[i + 1], "r");
+                            chemin = malloc(strlen(argv[i + 1]) + strlen("/alphabet.txt") + 1);
+                            strcpy(chemin, argv[i + 1]);
+                            strcat(chemin, "/alphabet.txt");
+                            arguments->alphabet = fopen(chemin, "r");
 
                         } else {
 
-                            char *chemin = malloc(strlen(argv[i + 1]) + strlen("alphabet.txt") + 1);
+                            chemin = malloc(strlen(argv[i + 1]) + strlen("alphabet.txt") + 1);
                             strcpy(chemin, argv[i + 1]);
                             strcat(chemin, "alphabet.txt");
                             arguments->alphabet = fopen(chemin, "r");
-                            free(chemin);
-
+                            
                         }
 
+                        free(chemin);
                         i++;
                     }
 
@@ -227,7 +229,7 @@ int main(int argc, char **argv) {
     char old;
     char new;
 
-    while ((old = fgetc(arguments.entree)) != EOF && old != '\n') {
+    while ((old = fgetc(arguments.entree)) != EOF) {
 
         char alphabet;
         bool trouve = false;
@@ -304,7 +306,6 @@ int main(int argc, char **argv) {
 
     }
 
-    fprintf(arguments.sortie, "\n");
     fclose(arguments.entree);
     fclose(arguments.sortie);
     fclose(arguments.alphabet);
