@@ -15,10 +15,16 @@ then
   exit 1
 fi
 
-while read -r line
-do
+IFS=$'\t'
 
-	# si commence par $ -> executer, 
-	# sinon executer à partir du byte 30 
-  echo -e $line
+while read -r line; do
+
+	points=`echo $line | cut -d ' ' -f1`
+	temps_max=`echo $line | cut -d ' ' -f2`
+	code_retour=`echo $line | cut -d ' ' -f3`
+	description=${line:7:22}
+	commande=${line:29};
+
+	$commande;
+
 done < ${correction}
