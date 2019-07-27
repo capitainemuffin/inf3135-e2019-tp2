@@ -2,7 +2,7 @@ options=-Wall -pedantic -std=c11
 CP = $(shell cat cp.txt)
 FICHIER = ./data/crypto-msg0
 
-.PHONY : data clean default test resultat push
+.PHONY : data clean default test resultat push valgrind
 
 default : tp2
 
@@ -48,7 +48,7 @@ push :
 	git commit -m 'commit et push automatique'
 	git push origin master
 
-valgrind : tp2
-	valgrind ./tp2
+valgrind : 
+	valgrind make test
 
 
