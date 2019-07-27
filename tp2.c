@@ -272,6 +272,5 @@ int main(int argc, char **argv) {
     }
 
     freeArguments(arguments);
-
     return 0;
 }

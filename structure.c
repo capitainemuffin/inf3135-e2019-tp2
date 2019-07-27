@@ -24,6 +24,8 @@ void freeArguments(Arguments_t* arguments){
     arguments->sortie = stdout;
     arguments->alphabet = NULL;
 
+    free(arguments);
+
 
 }
 
