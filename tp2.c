@@ -142,118 +142,28 @@ int main(int argc, char **argv) {
 
     Arguments_t *arguments = initArguments();
     arguments->alphabet = fopen("alphabet.txt", "r");
-
     traitement_arguments(argc, argv, arguments);
     valider_arguments(arguments);
 
-    // si c'est l'option encrypter ou decrypter ou bruteforce
+    if(arguments->mode.action == DECRYPT || arguments->mode.action == ENCRYPT){
 
-    switch(arguments->mode.action){
-        case BRUTEFORCE :
-            break;
-        case DECRYPT :
-            break;
-        case ENCRYPT :
-            break;
-    }
+            if (arguments->mode.action == DECRYPT) {
 
-    fseek(arguments->alphabet, -1, SEEK_END);
+                arguments->cle.cle = -(arguments->cle.cle);
 
-    if (fgetc(arguments->alphabet) == '\n') {
+            }
 
-        fseek(arguments->alphabet, -2, SEEK_END);
+            int old;
+            while ((old = fgetc(arguments->entree)) != EOF) {
+
+                int new = decaler_charactere(old, arguments->cle.cle,arguments->alphabet);
+                fprintf(arguments->sortie, "%c", new);
+
+            }
 
     } else {
 
-        fseek(arguments->alphabet, -1, SEEK_END);
-
-    }
-
-    long taille = ftell(arguments->alphabet);
-
-    if (arguments->mode.action == DECRYPT) {
-
-        arguments->cle.cle = -(arguments->cle.cle);
-
-    }
-
-    int old;
-    int new;
-
-    while ((old = fgetc(arguments->entree)) != EOF) {
-
-        int alphabet;
-        bool trouve = false;
-        fseek(arguments->alphabet, 0, SEEK_SET);
-
-        while ((alphabet = fgetc(arguments->alphabet)) != EOF && alphabet != '\n') {
-
-            if (alphabet == old) {
-
-                trouve = true;
-                fseek(arguments->alphabet, -1, SEEK_CUR);
-                break;
-
-            }
-
-        }
-
-        if (trouve) {
-            int i = 0;
-            if (arguments->cle.cle < 0) {
-
-                while (i > arguments->cle.cle) {
-
-                    if (ftell(arguments->alphabet) == 0) {
-
-                        fseek(arguments->alphabet, -1, SEEK_END);
-
-                        if (fgetc(arguments->alphabet) == '\n') {
-
-                            fseek(arguments->alphabet, -2, SEEK_CUR);
-
-                        } else {
-
-                            fseek(arguments->alphabet, -1, SEEK_CUR);
-
-                        }
-
-                    } else {
-
-                        fseek(arguments->alphabet, -1, SEEK_CUR);
-
-                    }
-
-                    i--;
-                }
-
-            } else {
-
-                while (i < arguments->cle.cle) {
-
-                    if (ftell(arguments->alphabet) == taille) {
-
-                        fseek(arguments->alphabet, 0, SEEK_SET);
-
-                    } else {
-
-                        fseek(arguments->alphabet, 1, SEEK_CUR);
-                    }
-
-                    i++;
-                }
-
-            }
-
-            new = fgetc(arguments->alphabet);
-
-        } else {
-
-            new = old;
-
-        }
-
-        fprintf(arguments->sortie, "%c", new);
+        bruteforce(arguments);
 
     }
 
