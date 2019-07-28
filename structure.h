@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 /**
 * Interface des structures de données
@@ -8,6 +9,12 @@
 
 #ifndef STRUCTURE_H
 #define STRUCTURE_H
+
+typedef enum Langue_s{
+
+    FRANCAIS, ANGLAIS, ALLEMAND
+
+} Langue_t;
 
 typedef enum Action_s{
 
@@ -31,8 +38,9 @@ typedef struct Cle_s {
 
 typedef struct Dictionnaire_s {
 
-    int nbr_mots;
-    char* mots[];
+    Langue_t langue;
+    unsigned long nbr_mots;
+    char** mots;
 
 } Dictionnaire_t ;
 
@@ -56,8 +64,6 @@ typedef struct Arguments_s{
 
 } Arguments_t;
 
-
-
 /**
  * Méthodes pour les Arguments
  */
@@ -68,11 +74,13 @@ void freeArguments(Arguments_t* arguments);
  * Méthode pour une liste de dictionnaires
  */
 Dictionnaires_t* initDictionnaires();
+void freeDictionnaires(Dictionnaires_t* dicts);
+Dictionnaires_t* ajouter_dictionnaire(Dictionnaires_t* dicts, Dictionnaire_t* dico1);
 
 /**
  * Méthodes pour un dictionnaire
  */
-Dictionnaire_t* initDictionnaire();
+Dictionnaire_t* initDictionnaire(const char* nom_fichier);
 Dictionnaire_t* ajouter_mots(Dictionnaire_t* dict);
 void freeDictionnaire(Dictionnaire_t* dict);
 

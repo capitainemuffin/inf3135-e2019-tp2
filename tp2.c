@@ -170,23 +170,6 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
                 case 'l' : {
 
-                    char *chemin;
-                    if (argv[i + 1][strlen(argv[i + 1]) - 1] != '/') {
-
-                        chemin = malloc(strlen(argv[i + 1]) + strlen("/alphabet.txt") + 1);
-                        strcpy(chemin, argv[i + 1]);
-                        strcat(chemin, "/alphabet.txt");
-                        arguments->alphabet = fopen(chemin, "r");
-
-                    } else {
-
-                        chemin = malloc(strlen(argv[i + 1]) + strlen("alphabet.txt") + 1);
-                        strcpy(chemin, argv[i + 1]);
-                        strcat(chemin, "alphabet.txt");
-                        arguments->alphabet = fopen(chemin, "r");
-
-                    }
-                    free(chemin);
                     i++;
                     break;
                 }
@@ -232,12 +215,12 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
         exit(8);
     }
 
-    if(arguments->mode.action != BRUTEFORCE && arguments->dictionnaires.nbr_dictionnaires > 0) {
+    if(arguments->mode.action != BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires > 0) {
         freeArguments(arguments);
         exit(9);
     }
 
-    if(arguments->mode.action == BRUTEFORCE &&  arguments->dictionnaires.nbr_dictionnaires == 0) {
+    if(arguments->mode.action == BRUTEFORCE &&  arguments->dictionnaires->nbr_dictionnaires == 0) {
         freeArguments(arguments);
         exit(9);
     }
