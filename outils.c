@@ -1,6 +1,6 @@
 #include "outils.h"
 #include <string.h>
-#include <dirent.h>
+#include <ctype.h>
 
 FILE* get_alphabet(char* chemin){
 
@@ -18,6 +18,20 @@ FILE* get_alphabet(char* chemin){
     }
 
 }
+
+bool isdigits(char* nombre){
+
+    int i = 0;
+    if(nombre[0] == '-') i++;
+
+    while(i < strlen(nombre)){
+        if (!isdigit(nombre[i])) return false;
+        i++;
+    }
+    return true;
+}
+
+
 
 
 

@@ -101,7 +101,7 @@ Dictionnaire_t *initDictionnaire(const char *repertoire, const char *nom_fichier
 
     dict->mots = (char **) malloc(dict->nbr_mots * sizeof(char *));
     fseek(fichier, 0, SEEK_SET);
-    char tmp[45];
+    char tmp[500];
 
     int i = 0;
     while (EOF != fscanf(fichier, "%[^\n]\n", tmp)) {
@@ -163,7 +163,7 @@ Dictionnaires_t *initDictionnaires(char* chemin) {
 
             Dictionnaire_t *dictionnaire;
             if ((dictionnaire = initDictionnaire(chemin_complet, dir->d_name)) == NULL) return NULL;
-            if (ajouter_dictionnaire(dicts, dictionnaire) == NULL) return NULL;
+            if ((dicts = ajouter_dictionnaire(dicts, dictionnaire)) == NULL) return NULL;
 
         }
     }
@@ -206,14 +206,12 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
 
 }
 
-
 void freeDictionnaires(Dictionnaires_t *dicts) {
 
     if(dicts){
         for (int i = 0; i < dicts->nbr_dictionnaires; i++) {
             if (dicts->dictionnaires[i]) {
                 freeDictionnaire(dicts->dictionnaires[i]);
-                free(dicts->dictionnaires[i]);
             }
         }
 
