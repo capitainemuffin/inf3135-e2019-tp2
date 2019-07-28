@@ -1,5 +1,4 @@
 #include <dirent.h>
-#include <limits.h>
 #include "structure.h"
 
 Arguments_t *initArguments() {
@@ -155,7 +154,7 @@ Dictionnaires_t *initDictionnaires(char* chemin) {
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
 
             nbr_fichiers++;
-            char chemin_complet[PATH_MAX];
+            char chemin_complet[300];
             chemin_complet[0] = '\0';
             strcpy(chemin_complet, chemin);
             if(chemin[strlen(chemin) -1] != '/') strcat(chemin_complet, "/");
