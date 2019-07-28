@@ -8,31 +8,26 @@
 
 void validation_args(int argc, char *argv[], Arguments_t *arguments) {
 
-    //ajouter option -b (bruteforce) et -l (repertoire des dictionnaires)
-    // code de retour 9 (les options obligatoires ne sont pas (toutes) présentes ou mal utilisées;)
     for (int i = 1; i < argc; i++) {
 
 #ifdef DEBUG
-        printf('%s\n', argv[i]);
+        printf("%s\n",argv[i]);
 #endif
 
         if (argv[i][0] == '-' && argv[i][2] == '\0') {
-
             switch (argv[i][1]) {
 
                 case 'c': {
 
                     if (i + 1 < argc && strlen(argv[i + 1]) == 12) {
                         arguments->code_perm = argv[i + 1];
-                        i++;
                     } else {
                         freeArguments(arguments);
                         exit(2);
                     }
+                    i++;
                     break;
-
                 }
-
                 case 'i' : {
 
                     if (i + 1 < argc) arguments->entree = fopen(argv[i + 1], "r");
@@ -42,9 +37,7 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                     }
                     i++;
                     break;
-
                 }
-
                 case 'o' : {
 
                     if (i + 1 < argc) arguments->sortie = fopen(argv[i + 1], "w");
@@ -54,9 +47,7 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                     }
                     i++;
                     break;
-
                 }
-
                 case 'd' : {
 
                     if (arguments->mode.present) {
@@ -66,9 +57,7 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                     arguments->mode.present = true;
                     arguments->mode.action = DECRYPT;
                     break;
-
                 }
-
                 case 'e' : {
 
                     if (arguments->mode.present) {
@@ -78,9 +67,7 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                     arguments->mode.present = true;
                     arguments->mode.action = ENCRYPT;
                     break;
-
                 }
-
                 case 'k' : {
 
                     if (i + 1 < argc) {
@@ -118,47 +105,26 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                             arguments->cle.cle = atoi(argv[i + 1]);
 
                         }
-
                         i++;
-
+                    } else {
+                        freeArguments(arguments);
+                        exit(7);
                     }
-
                     break;
-
                 }
-
                 case 'a' : {
 
                     if (i + 1 < argc) {
 
-                        char *chemin;
-                        if (argv[i + 1][strlen(argv[i + 1]) - 1] != '/') {
-
-                            chemin = malloc(strlen(argv[i + 1]) + strlen("/alphabet.txt") + 1);
-                            strcpy(chemin, argv[i + 1]);
-                            strcat(chemin, "/alphabet.txt");
-                            arguments->alphabet = fopen(chemin, "r");
-
-                        } else {
-
-                            chemin = malloc(strlen(argv[i + 1]) + strlen("alphabet.txt") + 1);
-                            strcpy(chemin, argv[i + 1]);
-                            strcat(chemin, "alphabet.txt");
-                            arguments->alphabet = fopen(chemin, "r");
-
-                        }
-
-                        free(chemin);
+                        arguments->alphabet = get_alphabet(argv[i + 1]);
                         i++;
                     }
 
                     break;
-
                 }
-
                 case 'b' : {
 
-                    if(arguments->mode.present) {
+                    if (arguments->mode.present) {
                         freeArguments(arguments);
                         exit(9);
                     }
@@ -167,18 +133,19 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                     arguments->mode.action = BRUTEFORCE;
                     break;
                 }
-
                 case 'l' : {
 
+
+                    // pour tous les fichiers du répertoire
+                    // tester si le dictionnaire s'est bien ouvert
+                    // tester si l'ajout s'est fait
                     i++;
                     break;
                 }
-
                 default : {
                     freeArguments(arguments);
                     exit(3);
                 }
-
             }
 
         } else {
@@ -215,17 +182,17 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
         exit(8);
     }
 
-    if(arguments->mode.action != BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires > 0) {
+    if (arguments->mode.action != BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires > 0) {
         freeArguments(arguments);
         exit(9);
     }
 
-    if(arguments->mode.action == BRUTEFORCE &&  arguments->dictionnaires->nbr_dictionnaires == 0) {
+    if (arguments->mode.action == BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires == 0) {
         freeArguments(arguments);
         exit(9);
     }
 
-    if(arguments->mode.action == BRUTEFORCE && arguments->cle.present) {
+    if (arguments->mode.action == BRUTEFORCE && arguments->cle.present) {
         freeArguments(arguments);
         exit(9);
     }

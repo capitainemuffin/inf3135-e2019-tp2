@@ -20,7 +20,7 @@ void freeArguments(Arguments_t *arguments) {
     if (arguments->entree) fclose(arguments->entree);
     if (arguments->sortie) fclose(arguments->sortie);
     if (arguments->alphabet) fclose(arguments->alphabet);
-    freeDictionnaires(arguments->dictionnaires);
+    if (arguments->dictionnaires) freeDictionnaires(arguments->dictionnaires);
     free(arguments);
 
 }
@@ -34,11 +34,19 @@ Dictionnaire_t *initDictionnaire(const char *nom_fichier) {
     if (strlen(nom_fichier) < 4) return NULL;
     if ((fichier = fopen(nom_fichier, "r")) != NULL) {
 
-        //doit terminer par .fr, .en. .de
-
-
         dict = malloc(sizeof(Dictionnaire_t));
         dict->nbr_mots = 0;
+
+        //doit terminer par .fr, .en. .de
+        if(strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".fr") == 0){
+            dict->langue = FRANCAIS;
+        } else if(strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".en") == 0) {
+            dict->langue = ANGLAIS;
+        } else if(strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".de") == 0){
+            dict->langue = ALLEMAND;
+        } else {
+            return NULL;
+        }
 
         int lettre;
         while ((lettre = fgetc(fichier)) != EOF) {
@@ -72,17 +80,13 @@ Dictionnaire_t *initDictionnaire(const char *nom_fichier) {
 
 }
 
-Dictionnaire_t *ajouter_mots(Dictionnaire_t *dict) {
-
-    return dict;
-}
-
 void freeDictionnaire(Dictionnaire_t *dict) {
 
     for (unsigned long i = 0; i < dict->nbr_mots; i++) {
-        free(dict->mots[i]);
+        if(dict->mots[i]) free(dict->mots[i]);
     }
-    free(dict->mots);
+
+    if(dict->mots) free(dict->mots);
     free(dict);
 }
 
@@ -119,9 +123,12 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
 
 void freeDictionnaires(Dictionnaires_t *dicts) {
     for (int i = 0; i < dicts->nbr_dictionnaires; i++) {
-        freeDictionnaire(dicts->dictionnaires[i]);
-        free(dicts->dictionnaires[i]);
+        if(dicts->dictionnaires[i]) {
+            freeDictionnaire(dicts->dictionnaires[i]);
+            free(dicts->dictionnaires[i]);
+        }
     }
-    free(dicts->dictionnaires);
+
+    if(dicts->dictionnaires) free(dicts->dictionnaires);
     free(dicts);
 }

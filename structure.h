@@ -5,18 +5,18 @@
 
 /**
 * Interface des structures de données
-**/ 
+**/
 
 #ifndef STRUCTURE_H
 #define STRUCTURE_H
 
-typedef enum Langue_s{
+typedef enum Langue_s {
 
     FRANCAIS, ANGLAIS, ALLEMAND
 
 } Langue_t;
 
-typedef enum Action_s{
+typedef enum Action_s {
 
     ENCRYPT, DECRYPT, BRUTEFORCE
 
@@ -40,50 +40,50 @@ typedef struct Dictionnaire_s {
 
     Langue_t langue;
     unsigned long nbr_mots;
-    char** mots;
+    char **mots;
 
-} Dictionnaire_t ;
+} Dictionnaire_t;
 
 typedef struct Dictionnaires_s {
 
-    int nbr_dictionnaires;
-    int capacite;
-    Dictionnaire_t** dictionnaires;
+    bool francais, anglais, allemand;
+    int nbr_dictionnaires, capacite;
+    Dictionnaire_t **dictionnaires;
 
 } Dictionnaires_t;
 
-typedef struct Arguments_s{
+typedef struct Arguments_s {
 
     char *code_perm;
     Cle_t cle;
     Mode_t mode;
-    FILE *alphabet;
-    FILE *entree;
-    FILE *sortie;
-    Dictionnaires_t* dictionnaires;
+    FILE *alphabet, *entree, *sortie;
+    Dictionnaires_t *dictionnaires;
 
 } Arguments_t;
 
 /**
  * Méthodes pour les Arguments
  */
-Arguments_t* initArguments();
-void freeArguments(Arguments_t* arguments);
+Arguments_t *initArguments();
+
+void freeArguments(Arguments_t *arguments);
 
 /**
  * Méthode pour une liste de dictionnaires
  */
-Dictionnaires_t* initDictionnaires();
-void freeDictionnaires(Dictionnaires_t* dicts);
-Dictionnaires_t* ajouter_dictionnaire(Dictionnaires_t* dicts, Dictionnaire_t* dico1);
+Dictionnaires_t *initDictionnaires();
+
+void freeDictionnaires(Dictionnaires_t *dicts);
+
+Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *dico1);
 
 /**
  * Méthodes pour un dictionnaire
  */
-Dictionnaire_t* initDictionnaire(const char* nom_fichier);
-Dictionnaire_t* ajouter_mots(Dictionnaire_t* dict);
-void freeDictionnaire(Dictionnaire_t* dict);
+Dictionnaire_t *initDictionnaire(const char *nom_fichier);
 
+void freeDictionnaire(Dictionnaire_t *dict);
 
 
 #endif

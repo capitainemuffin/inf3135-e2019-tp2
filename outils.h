@@ -4,5 +4,7 @@
 #ifndef OUTILS_H
 #define OUTILS_H
 
+FILE* get_alphabet(char* chemin);
 #endif
+
 
