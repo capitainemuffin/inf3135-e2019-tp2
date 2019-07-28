@@ -2,6 +2,10 @@
 #include "structure.h"
 #include "outils.h"
 
+void bruteforce(Arguments_t* arguments){
+
+}
+
 void traitement_arguments(int argc, char **argv, Arguments_t *arguments) {
 
     arguments->programme = argv[0];
@@ -142,7 +146,16 @@ int main(int argc, char **argv) {
     traitement_arguments(argc, argv, arguments);
     valider_arguments(arguments);
 
-    // si c'est l'option encrypter ou decrypter
+    // si c'est l'option encrypter ou decrypter ou bruteforce
+
+    switch(arguments->mode.action){
+        case BRUTEFORCE :
+            break;
+        case DECRYPT :
+            break;
+        case ENCRYPT :
+            break;
+    }
 
     fseek(arguments->alphabet, -1, SEEK_END);
 
