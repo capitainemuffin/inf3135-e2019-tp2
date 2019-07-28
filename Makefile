@@ -30,6 +30,10 @@ test : tp2
 	./tp2 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof
 	diff $(FICHIER)1.out res1.sof
 
+bruteforce : tp2
+	./tp2 -c $(CP) -d -l modele/ -i $(FICHIER)1.in -o res1.sof
+
+
 data :
 	curl https://www.github.com/guyfrancoeur/INF3135_E2019_TP/raw/master/crypto-data.zip -sLO -o crypto-data.zip
 	if [ ! -d "data" ]; then mkdir data; fi

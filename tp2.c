@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <ctype.h>
 #include "structure.h"
 #include "outils.h"
@@ -137,12 +133,18 @@ void traitement_arguments(int argc, char **argv, Arguments_t *arguments) {
                 }
                 case 'l' : {
 
-                    Dictionnaires_t* dictionnaires = initDictionnaires();
+                    if (i + 1 < argc) {
 
-                    for(){}
-                    // pour tous les fichiers du répertoire
-                    // tester si le dictionnaire s'est bien ouvert
-                    // tester si l'ajout s'est fait
+                        if((arguments->dictionnaires = initDictionnaires(argv[i + 1])) == NULL){
+                            freeArguments(arguments);
+                            exit(12);
+                        }
+
+                    } else {
+
+                        freeArguments(arguments);
+                        exit(11);
+                    }
                     i++;
                     break;
                 }

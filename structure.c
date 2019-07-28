@@ -1,3 +1,5 @@
+#include <dirent.h>
+#include <limits.h>
 #include "structure.h"
 
 Arguments_t *initArguments() {
@@ -10,8 +12,7 @@ Arguments_t *initArguments() {
     arguments->sortie = stdout;
     arguments->alphabet = NULL;
     arguments->code_perm = NULL;
-    arguments->dictionnaires = initDictionnaires();
-
+    arguments->dictionnaires = NULL;
     return arguments;
 }
 
@@ -43,12 +44,12 @@ void valider_arguments(Arguments_t *arguments) {
         exit(8);
     }
 
-    if (arguments->mode.action != BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires > 0) {
+    if (arguments->mode.action != BRUTEFORCE && arguments->dictionnaires != NULL) {
         freeArguments(arguments);
         exit(9);
     }
 
-    if (arguments->mode.action == BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires == 0) {
+    if (arguments->mode.action == BRUTEFORCE && arguments->dictionnaires == NULL) {
         freeArguments(arguments);
         exit(9);
     }
@@ -70,57 +71,54 @@ void freeArguments(Arguments_t *arguments) {
 
 }
 
-Dictionnaire_t *initDictionnaire(const char *nom_fichier) {
+Dictionnaire_t *initDictionnaire(const char *repertoire, const char *nom_fichier) {
 
     FILE *fichier;
     Dictionnaire_t *dict = NULL;
 
     //taille minimale est 4
     if (strlen(nom_fichier) < 4) return NULL;
-    if ((fichier = fopen(nom_fichier, "r")) != NULL) {
+    if ((fichier = fopen(repertoire, "r")) == NULL) return NULL;
 
-        dict = malloc(sizeof(Dictionnaire_t));
-        dict->nbr_mots = 0;
+    dict = malloc(sizeof(Dictionnaire_t));
+    dict->nbr_mots = 0;
 
-        //doit terminer par .fr, .en. .de
-        if (strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".fr") == 0) {
-            dict->langue = FRANCAIS;
-        } else if (strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".en") == 0) {
-            dict->langue = ANGLAIS;
-        } else if (strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".de") == 0) {
-            dict->langue = ALLEMAND;
-        } else {
-            return NULL;
+    //doit terminer par .fr, .en. .de
+    if (strcmp(nom_fichier + strlen(nom_fichier ) - 3, ".fr") == 0) {
+        dict->langue = FRANCAIS;
+    } else if (strcmp(nom_fichier + strlen(nom_fichier ) - 3, ".en") == 0) {
+        dict->langue = ANGLAIS;
+    } else if (strcmp(nom_fichier + strlen(nom_fichier ) - 3, ".de") == 0) {
+        dict->langue = ALLEMAND;
+    } else {
+        return NULL;
+    }
+
+    int lettre;
+    while ((lettre = fgetc(fichier)) != EOF) {
+        if (lettre == ' ' || lettre == '\n') dict->nbr_mots++;
+    }
+
+    dict->mots = (char **) malloc(dict->nbr_mots * sizeof(char *));
+    fseek(fichier, 0, SEEK_SET);
+    char tmp[45];
+
+    int i = 0;
+    while (EOF != fscanf(fichier, "%[^\n]\n", tmp)) {
+
+        char *token = strtok(tmp, " ");
+        while (token != NULL) {
+
+            dict->mots[i] = (char *) malloc(45 * sizeof(char));
+            dict->mots[i][0] = '\0';
+            strcpy(dict->mots[i], token);
+            i++;
+            token = strtok(NULL, " ");
         }
-
-        int lettre;
-        while ((lettre = fgetc(fichier)) != EOF) {
-            if (lettre == ' ' || lettre == '\n') dict->nbr_mots++;
-        }
-
-        dict->mots = (char **) malloc(dict->nbr_mots * sizeof(char *));
-        fseek(fichier, 0, SEEK_SET);
-        char tmp[45];
-
-        while (EOF != fscanf(fichier, "%[^\n]\n", tmp)) {
-
-            char *token = strtok(tmp, " ");
-            int i = 0;
-            while (token != NULL) {
-
-                dict->mots[i] = (char *) malloc(45 * sizeof(char));
-                dict->mots[i][0] = '\0';
-                strncpy(dict->mots[i], token, strlen(token));
-                i++;
-                token = strtok(NULL, " ");
-            }
-
-        }
-
-        fclose(fichier);
 
     }
 
+    fclose(fichier);
     return dict;
 
 }
@@ -135,17 +133,44 @@ void freeDictionnaire(Dictionnaire_t *dict) {
     free(dict);
 }
 
-Dictionnaires_t *initDictionnaires() {
+Dictionnaires_t *initDictionnaires(char* chemin) {
 
-    Dictionnaires_t *dict = malloc(sizeof(Dictionnaires_t));
-    dict->nbr_dictionnaires = 0;
-    dict->dictionnaires = malloc(sizeof(Dictionnaire_t *) * 10);
-    dict->capacite = 10;
-    dict->francais = false;
-    dict->anglais = false;
-    dict->allemand = false;
+    Dictionnaires_t *dicts = malloc(sizeof(Dictionnaires_t));
+    dicts->nbr_dictionnaires = 0;
+    dicts->dictionnaires = malloc(sizeof(Dictionnaire_t *) * 10);
+    dicts->capacite = 10;
+    dicts->francais = false;
+    dicts->anglais = false;
+    dicts->allemand = false;
 
-    return dict;
+    DIR *repertoire;
+    struct dirent *dir;
+    repertoire = opendir(chemin);
+
+    if (repertoire == NULL) return NULL;
+
+    int nbr_fichiers = 0;
+    while ((dir = readdir(repertoire)) != NULL) {
+
+        if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
+
+            nbr_fichiers++;
+            char chemin_complet[PATH_MAX];
+            chemin_complet[0] = '\0';
+            strcpy(chemin_complet, chemin);
+            if(chemin[strlen(chemin) -1] != '/') strcat(chemin_complet, "/");
+            strcat(chemin_complet,dir->d_name);
+
+            Dictionnaire_t *dictionnaire;
+            if ((dictionnaire = initDictionnaire(chemin_complet, dir->d_name)) == NULL) return NULL;
+            if (ajouter_dictionnaire(dicts, dictionnaire) == NULL) return NULL;
+
+        }
+    }
+
+    if(nbr_fichiers == 0) return NULL;
+    closedir(repertoire);
+    return dicts;
 }
 
 Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *dico1) {
@@ -163,6 +188,18 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
         }
     }
 
+    switch(dico1->langue){
+        case FRANCAIS :
+            dicts->francais = true;
+            break;
+        case ANGLAIS :
+            dicts->anglais = true;
+            break;
+        case ALLEMAND :
+            dicts->allemand = true;
+            break;
+    }
+
     dicts->dictionnaires[dicts->nbr_dictionnaires] = dico1;
     dicts->nbr_dictionnaires++;
     return dicts;
@@ -171,13 +208,17 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
 
 
 void freeDictionnaires(Dictionnaires_t *dicts) {
-    for (int i = 0; i < dicts->nbr_dictionnaires; i++) {
-        if (dicts->dictionnaires[i]) {
-            freeDictionnaire(dicts->dictionnaires[i]);
-            free(dicts->dictionnaires[i]);
+
+    if(dicts){
+        for (int i = 0; i < dicts->nbr_dictionnaires; i++) {
+            if (dicts->dictionnaires[i]) {
+                freeDictionnaire(dicts->dictionnaires[i]);
+                free(dicts->dictionnaires[i]);
+            }
         }
+
+        if (dicts->dictionnaires) free(dicts->dictionnaires);
+        free(dicts);
     }
 
-    if (dicts->dictionnaires) free(dicts->dictionnaires);
-    free(dicts);
 }

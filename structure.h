@@ -73,7 +73,7 @@ void freeArguments(Arguments_t *arguments);
 /**
  * Méthode pour une liste de dictionnaires
  */
-Dictionnaires_t *initDictionnaires();
+Dictionnaires_t *initDictionnaires(char * chemin);
 
 void freeDictionnaires(Dictionnaires_t *dicts);
 
@@ -82,7 +82,7 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
 /**
  * Méthodes pour un dictionnaire
  */
-Dictionnaire_t *initDictionnaire(const char *nom_fichier);
+Dictionnaire_t *initDictionnaire(const char* repertoire, const char *nom_fichier);
 
 void freeDictionnaire(Dictionnaire_t *dict);
 

@@ -1,5 +1,6 @@
 #include "outils.h"
 #include <string.h>
+#include <dirent.h>
 
 FILE* get_alphabet(char* chemin){
 
@@ -17,3 +18,7 @@ FILE* get_alphabet(char* chemin){
     }
 
 }
+
+
+
+

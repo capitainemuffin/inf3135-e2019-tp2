@@ -5,7 +5,7 @@
    ## Corrections depuis le TP1
 
    - Le programme ne s'arrête plus dès qu'il rencontre un `\n` dans le fichier en entrée.
-   - Code d'erreur `11` si les options `-d` et `-e` sont présentes en même temps.
+   - Code d'erreur `9` si les options `-d` et `-e` sont présentes en même temps.
    - Alphabet : si par exemple la commande est `-a ./ok`, le programme tente d'ouvrir `./ok/alphabet.txt` au lieu de `./ok`.
    - Retrait de toute les variables de fichiers dans le `Makefile` pour mettre `FICHIER = ./data/crypto-msg0`.
    - La commande `make data` fait une copie de `./data/crypto-msg01.alphabet` nommée `./data/alphabet.txt`.
@@ -14,7 +14,11 @@
 
    ## Ajouts de fonctionnalités
 
-   - Déplacement des structures de données vers les fichiers `structure.h` et `structure.c`.
+   - Déplacements de quelques fonctions de traitements des arguments dans `outils.h` et `outils.c` pour améliorer 
+   la structure, améliorer la lisibilité et alléger le code dans `tp2.c`.
+   - Déplacement de la structure `Arguments_s` et de ses sous-structures dans `structure.h` et `structure.c`.
+   - Structure `Dictionnaires_t`, qui gère une liste de dictionnaires.
+   - Structure `Dictionnaire_t`, qui représente un dictionnaire, liste de mots.
    - Ajout de la fonction `Arguments_t* initArguments()` qui renvoi un pointeur vers un objet `Argument_t` qui contient tous les arguments.
 
    # Travail Pratique 1
