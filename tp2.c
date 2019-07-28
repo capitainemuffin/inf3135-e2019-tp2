@@ -2,7 +2,45 @@
 #include "structure.h"
 #include "outils.h"
 
-void bruteforce(Arguments_t* arguments){
+void bruteforce(Arguments_t *arguments) {
+
+    unsigned long taille_alphabet = (int) get_taille_fichier(arguments->alphabet);
+    unsigned long taille_message = get_taille_fichier(arguments->entree);
+    char *message = (char *) malloc(sizeof(taille_message));
+    message[0] = '\0';
+    //int score = 0;
+
+    for (int cle = 0; cle < taille_alphabet; cle++) {
+        //décrypter le message avec la clé courante;
+
+        int old;
+        int index = 0;
+        while ((old = fgetc(arguments->entree)) != EOF) {
+
+            int new = decaler_charactere(old, cle, arguments->alphabet);
+            message[index] = (char) new;
+
+        }
+
+        for (int i = 0; i < arguments->dictionnaires->nbr_dictionnaires; i++) {
+            // pour chaque dictionnaire
+
+            for (unsigned long j = 0; j < arguments->dictionnaires->dictionnaires[i]->nbr_mots; j++) {
+                //pour chaque mot du dictionnaire
+
+                //décrypter le message avec la clé courante. Comparer chaque mot du message avec les mots
+                // du dictionnaire
+
+
+                printf("%s\n", arguments->dictionnaires->dictionnaires[i]->mots[j]);
+            }
+
+        }
+
+    }
+
+    fprintf(arguments->sortie, "%s", message);
+
 
 }
 
@@ -145,21 +183,21 @@ int main(int argc, char **argv) {
     traitement_arguments(argc, argv, arguments);
     valider_arguments(arguments);
 
-    if(arguments->mode.action == DECRYPT || arguments->mode.action == ENCRYPT){
+    if (arguments->mode.action == DECRYPT || arguments->mode.action == ENCRYPT) {
 
-            if (arguments->mode.action == DECRYPT) {
+        if (arguments->mode.action == DECRYPT) {
 
-                arguments->cle.cle = -(arguments->cle.cle);
+            arguments->cle.cle = -(arguments->cle.cle);
 
-            }
+        }
 
-            int old;
-            while ((old = fgetc(arguments->entree)) != EOF) {
+        int old;
+        while ((old = fgetc(arguments->entree)) != EOF) {
 
-                int new = decaler_charactere(old, arguments->cle.cle,arguments->alphabet);
-                fprintf(arguments->sortie, "%c", new);
+            int new = decaler_charactere(old, arguments->cle.cle, arguments->alphabet);
+            fprintf(arguments->sortie, "%c", new);
 
-            }
+        }
 
     } else {
 

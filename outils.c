@@ -19,6 +19,15 @@ FILE *get_alphabet(char *chemin) {
 
 }
 
+unsigned long get_taille_fichier(FILE* fichier){
+
+    fseek(fichier, -1, SEEK_END);
+    if (fgetc(fichier) == '\n') fseek(fichier, -1, SEEK_CUR);
+    fseek(fichier, -1, SEEK_CUR);
+
+    return ftell(fichier);
+}
+
 bool isdigits(char *nombre) {
 
     int i = 0;
@@ -33,12 +42,8 @@ bool isdigits(char *nombre) {
 
 int decaler_charactere(int old, int cle, FILE *fichier_alphabet) {
 
-    // Obtenir la taille de l'alphabet
-    fseek(fichier_alphabet, -1, SEEK_END);
-    if (fgetc(fichier_alphabet) == '\n') fseek(fichier_alphabet, -1, SEEK_CUR);
-    fseek(fichier_alphabet, -1, SEEK_CUR);
-    unsigned long taille = ftell(fichier_alphabet);
 
+    unsigned long taille = get_taille_fichier(fichier_alphabet);
     int alphabet;
     bool trouve = false;
     int new;
