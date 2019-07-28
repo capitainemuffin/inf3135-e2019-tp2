@@ -15,6 +15,51 @@ Arguments_t *initArguments() {
     return arguments;
 }
 
+void valider_arguments(Arguments_t *arguments) {
+
+    if (arguments->code_perm == NULL) {
+
+        fprintf(stderr,
+                "Usage: %s <-c CODEpermanent> <-d | -e> <-k valeur> [-i fichier.in] [-o fichier.out] [-a chemin]\n",
+                arguments->programme);
+        freeArguments(arguments);
+        exit(1);
+
+    }
+
+    if (!arguments->mode.present) {
+        freeArguments(arguments);
+        exit(4);
+    }
+
+    if (arguments->mode.action != BRUTEFORCE && !arguments->cle.present) {
+        freeArguments(arguments);
+        exit(7);
+
+    }
+
+    if (arguments->alphabet == NULL) {
+        freeArguments(arguments);
+        exit(8);
+    }
+
+    if (arguments->mode.action != BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires > 0) {
+        freeArguments(arguments);
+        exit(9);
+    }
+
+    if (arguments->mode.action == BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires == 0) {
+        freeArguments(arguments);
+        exit(9);
+    }
+
+    if (arguments->mode.action == BRUTEFORCE && arguments->cle.present) {
+        freeArguments(arguments);
+        exit(9);
+    }
+
+}
+
 void freeArguments(Arguments_t *arguments) {
 
     if (arguments->entree) fclose(arguments->entree);
@@ -38,11 +83,11 @@ Dictionnaire_t *initDictionnaire(const char *nom_fichier) {
         dict->nbr_mots = 0;
 
         //doit terminer par .fr, .en. .de
-        if(strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".fr") == 0){
+        if (strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".fr") == 0) {
             dict->langue = FRANCAIS;
-        } else if(strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".en") == 0) {
+        } else if (strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".en") == 0) {
             dict->langue = ANGLAIS;
-        } else if(strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".de") == 0){
+        } else if (strcmp(&nom_fichier[strlen(nom_fichier - 3)], ".de") == 0) {
             dict->langue = ALLEMAND;
         } else {
             return NULL;
@@ -83,10 +128,10 @@ Dictionnaire_t *initDictionnaire(const char *nom_fichier) {
 void freeDictionnaire(Dictionnaire_t *dict) {
 
     for (unsigned long i = 0; i < dict->nbr_mots; i++) {
-        if(dict->mots[i]) free(dict->mots[i]);
+        if (dict->mots[i]) free(dict->mots[i]);
     }
 
-    if(dict->mots) free(dict->mots);
+    if (dict->mots) free(dict->mots);
     free(dict);
 }
 
@@ -96,6 +141,10 @@ Dictionnaires_t *initDictionnaires() {
     dict->nbr_dictionnaires = 0;
     dict->dictionnaires = malloc(sizeof(Dictionnaire_t *) * 10);
     dict->capacite = 10;
+    dict->francais = false;
+    dict->anglais = false;
+    dict->allemand = false;
+
     return dict;
 }
 
@@ -123,12 +172,12 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
 
 void freeDictionnaires(Dictionnaires_t *dicts) {
     for (int i = 0; i < dicts->nbr_dictionnaires; i++) {
-        if(dicts->dictionnaires[i]) {
+        if (dicts->dictionnaires[i]) {
             freeDictionnaire(dicts->dictionnaires[i]);
             free(dicts->dictionnaires[i]);
         }
     }
 
-    if(dicts->dictionnaires) free(dicts->dictionnaires);
+    if (dicts->dictionnaires) free(dicts->dictionnaires);
     free(dicts);
 }

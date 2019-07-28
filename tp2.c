@@ -6,7 +6,9 @@
 #include "structure.h"
 #include "outils.h"
 
-void validation_args(int argc, char *argv[], Arguments_t *arguments) {
+void traitement_arguments(int argc, char **argv, Arguments_t *arguments) {
+
+    arguments->programme = argv[0];
 
     for (int i = 1; i < argc; i++) {
 
@@ -135,7 +137,9 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
                 }
                 case 'l' : {
 
+                    Dictionnaires_t* dictionnaires = initDictionnaires();
 
+                    for(){}
                     // pour tous les fichiers du répertoire
                     // tester si le dictionnaire s'est bien ouvert
                     // tester si l'ajout s'est fait
@@ -152,51 +156,7 @@ void validation_args(int argc, char *argv[], Arguments_t *arguments) {
             freeArguments(arguments);
             exit(3);
         }
-
     }
-
-    if (arguments->code_perm == NULL) {
-
-        fprintf(stderr,
-                "Usage: %s <-c CODEpermanent> <-d | -e> <-k valeur> [-i fichier.in] [-o fichier.out] [-a chemin]\n",
-                argv[0]);
-        freeArguments(arguments);
-        exit(1);
-
-    }
-
-    if (!arguments->mode.present) {
-        freeArguments(arguments);
-        exit(4);
-    }
-
-
-    if (arguments->mode.action != BRUTEFORCE && !arguments->cle.present) {
-        freeArguments(arguments);
-        exit(7);
-
-    }
-
-    if (arguments->alphabet == NULL) {
-        freeArguments(arguments);
-        exit(8);
-    }
-
-    if (arguments->mode.action != BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires > 0) {
-        freeArguments(arguments);
-        exit(9);
-    }
-
-    if (arguments->mode.action == BRUTEFORCE && arguments->dictionnaires->nbr_dictionnaires == 0) {
-        freeArguments(arguments);
-        exit(9);
-    }
-
-    if (arguments->mode.action == BRUTEFORCE && arguments->cle.present) {
-        freeArguments(arguments);
-        exit(9);
-    }
-
 }
 
 int main(int argc, char **argv) {
@@ -204,7 +164,11 @@ int main(int argc, char **argv) {
     Arguments_t *arguments = initArguments();
     arguments->alphabet = fopen("alphabet.txt", "r");
 
-    validation_args(argc, argv, arguments);
+    traitement_arguments(argc, argv, arguments);
+    valider_arguments(arguments);
+
+    // si c'est l'option encrypter ou decrypter
+
     fseek(arguments->alphabet, -1, SEEK_END);
 
     if (fgetc(arguments->alphabet) == '\n') {

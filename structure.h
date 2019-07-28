@@ -54,6 +54,7 @@ typedef struct Dictionnaires_s {
 
 typedef struct Arguments_s {
 
+    char* programme;
     char *code_perm;
     Cle_t cle;
     Mode_t mode;
@@ -66,7 +67,7 @@ typedef struct Arguments_s {
  * Méthodes pour les Arguments
  */
 Arguments_t *initArguments();
-
+void valider_arguments(Arguments_t* arguments);
 void freeArguments(Arguments_t *arguments);
 
 /**
