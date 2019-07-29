@@ -27,7 +27,7 @@ void bruteforce(Arguments_t *arguments) {
     for (int cle = 0; cle < nbr_cle; cle++) {
 
         int score = 0;
-        char *tmp = malloc(sizeof(char) * taille_message);
+        char *tmp = malloc(sizeof(char) * taille_message + 2);
         tmp[0] = '\0';
         for (int i = 0; i < taille_message; i++) {
             char *tmp2 = malloc(sizeof(char) * 2);
@@ -37,7 +37,7 @@ void bruteforce(Arguments_t *arguments) {
             free(tmp2);
         }
 
-        char *message_decoder = malloc(sizeof(char) * taille_message);
+        char *message_decoder = malloc(sizeof(char) * taille_message + 2);
         message_decoder[0] = '\0';
         strcpy(message_decoder, tmp);
 
