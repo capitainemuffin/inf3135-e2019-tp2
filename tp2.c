@@ -6,7 +6,7 @@ void bruteforce(Arguments_t *arguments) {
 
     int nbr_cle = (int) get_taille_alphabet(arguments->alphabet) + 1;
     int score_max = 0;
-    char *message_a_decoder = malloc(sizeof(char));
+    char *message_a_decoder = malloc(sizeof(char) * 3);
     message_a_decoder[0] = '\0';
 
     int old;
@@ -16,7 +16,7 @@ void bruteforce(Arguments_t *arguments) {
         char *tmp = malloc(sizeof(char) * 2);
         tmp[1] = '\0';
         tmp[0] = (char) old;
-        if(!realloc(message_a_decoder,sizeof(char) * taille_message)) exit(100);
+        message_a_decoder = realloc(message_a_decoder,sizeof(char) * taille_message + 2);
         strcat(message_a_decoder, tmp);
         free(tmp);
     }
@@ -65,7 +65,7 @@ void bruteforce(Arguments_t *arguments) {
         printf("Meilleur message pour le moment : %s\n", message_trouve);
 #endif
         }
-
+        free(message_decoder);
         free(tmp);
     }
 
@@ -76,6 +76,7 @@ void bruteforce(Arguments_t *arguments) {
 
     fprintf(arguments->sortie, "%s", message_trouve);
     free(message_a_decoder);
+    free(message_trouve);
 
 }
 
@@ -197,7 +198,7 @@ void traitement_arguments(int argc, char **argv, Arguments_t *arguments) {
                 } else {
 
                     freeArguments(arguments);
-                    exit(11);
+                    exit(9);
                 }
                 i++;
                 break;

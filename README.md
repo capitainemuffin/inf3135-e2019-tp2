@@ -1,5 +1,3 @@
-    ***** documenter prises de décisions importantes 
-
    # Travail Pratique 2
 
    ## Corrections depuis le TP1
@@ -12,7 +10,7 @@
    - Lorsqu'une erreur est rencontrée, le programme appelle `freeArguments(Arguments_t*)` avant de quitter afin d'éviter
    les fuites de mémoire.
 
-   ## Ajouts de fonctionnalités
+   ## Ajouts de fonctionnalités pour le TP2
 
    - Déplacements de quelques fonctions de traitements des arguments dans `outils.h` et `outils.c` pour améliorer 
    la structure, améliorer la lisibilité et alléger le code dans `tp2.c`.
@@ -20,7 +18,9 @@
    - Structure `Dictionnaires_t`, qui gère une liste de dictionnaires.
    - Structure `Dictionnaire_t`, qui représente un dictionnaire, liste de mots.
    - Ajout de la fonction `Arguments_t* initArguments()` qui renvoi un pointeur vers un objet `Argument_t` qui contient tous les arguments.
-
+   - Fonction `bruteforce` qui teste toutes les clés possibles en fonction de l'alphabet sur le message en entrée et 
+   affiche en sortie le message le plus probable après avoir comparé avec les dictionnaires données en entrée.
+   
    # Travail Pratique 1
 
    ## Description

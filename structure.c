@@ -95,7 +95,7 @@ Dictionnaire_t *initDictionnaire(const char *repertoire, const char *nom_fichier
 
     int lettre;
     while ((lettre = fgetc(fichier)) != EOF) {
-        if (lettre == ' ' || lettre == '\n') dict->nbr_mots++;
+        if (lettre == ' ' || lettre == '\n' ) dict->nbr_mots++;
     }
 
     dict->mots = (char **) malloc(dict->nbr_mots * sizeof(char *));
