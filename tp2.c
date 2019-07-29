@@ -4,43 +4,23 @@
 
 void bruteforce(Arguments_t *arguments) {
 
-    unsigned long taille_alphabet = (int) get_taille_fichier(arguments->alphabet);
-    unsigned long taille_message = get_taille_fichier(arguments->entree);
-    char *message = (char *) malloc(sizeof(taille_message));
-    message[0] = '\0';
-    //int score = 0;
+//    int nbr_cle = (int)get_taille_fichier(arguments->alphabet);
+//    unsigned long taille_message = get_taille_fichier(arguments->entree);
+//    int score_max = 0;
+//
+//    for(int i = 0; i <   nbr_cle ; i++){
+//
+//    }
+    for (int i = 0; i < arguments->dictionnaires->nbr_dictionnaires; i++) {
+        // pour chaque dictionnaire
+        for (unsigned long j = 0; j < arguments->dictionnaires->dictionnaires[i]->nbr_mots; j++) {
+            //pour chaque mot du dictionnaire
 
-    for (int cle = 0; cle < taille_alphabet; cle++) {
-        //décrypter le message avec la clé courante;
-
-        int old;
-        int index = 0;
-        while ((old = fgetc(arguments->entree)) != EOF) {
-
-            int new = decaler_charactere(old, cle, arguments->alphabet);
-            message[index] = (char) new;
-
-        }
-
-        for (int i = 0; i < arguments->dictionnaires->nbr_dictionnaires; i++) {
-            // pour chaque dictionnaire
-
-            for (unsigned long j = 0; j < arguments->dictionnaires->dictionnaires[i]->nbr_mots; j++) {
-                //pour chaque mot du dictionnaire
-
-                //décrypter le message avec la clé courante. Comparer chaque mot du message avec les mots
-                // du dictionnaire
-
-
-                printf("%s\n", arguments->dictionnaires->dictionnaires[i]->mots[j]);
-            }
+            printf("%s\n", arguments->dictionnaires->dictionnaires[i]->mots[j]);
 
         }
 
     }
-
-    fprintf(arguments->sortie, "%s", message);
-
 
 }
 

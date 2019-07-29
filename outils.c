@@ -42,7 +42,6 @@ bool isdigits(char *nombre) {
 
 int decaler_charactere(int old, int cle, FILE *fichier_alphabet) {
 
-
     unsigned long taille = get_taille_fichier(fichier_alphabet);
     int alphabet;
     bool trouve = false;

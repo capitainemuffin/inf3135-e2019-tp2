@@ -83,11 +83,11 @@ Dictionnaire_t *initDictionnaire(const char *repertoire, const char *nom_fichier
     dict->nbr_mots = 0;
 
     //doit terminer par .fr, .en. .de
-    if (strcmp(nom_fichier + strlen(nom_fichier ) - 3, ".fr") == 0) {
+    if (strcmp(nom_fichier + strlen(nom_fichier) - 3, ".fr") == 0) {
         dict->langue = FRANCAIS;
-    } else if (strcmp(nom_fichier + strlen(nom_fichier ) - 3, ".en") == 0) {
+    } else if (strcmp(nom_fichier + strlen(nom_fichier) - 3, ".en") == 0) {
         dict->langue = ANGLAIS;
-    } else if (strcmp(nom_fichier + strlen(nom_fichier ) - 3, ".de") == 0) {
+    } else if (strcmp(nom_fichier + strlen(nom_fichier) - 3, ".de") == 0) {
         dict->langue = ALLEMAND;
     } else {
         return NULL;
@@ -105,14 +105,13 @@ Dictionnaire_t *initDictionnaire(const char *repertoire, const char *nom_fichier
     int i = 0;
     while (EOF != fscanf(fichier, "%[^\n]\n", tmp)) {
 
-        char *token = strtok(tmp, " ");
+        char *token = strtok(tmp, " \n\t");
         while (token != NULL) {
-
             dict->mots[i] = (char *) malloc(45 * sizeof(char));
             dict->mots[i][0] = '\0';
             strcpy(dict->mots[i], token);
             i++;
-            token = strtok(NULL, " ");
+            token = strtok(NULL, " \n\t");
         }
 
     }
@@ -132,7 +131,7 @@ void freeDictionnaire(Dictionnaire_t *dict) {
     free(dict);
 }
 
-Dictionnaires_t *initDictionnaires(char* chemin) {
+Dictionnaires_t *initDictionnaires(char *chemin) {
 
     Dictionnaires_t *dicts = malloc(sizeof(Dictionnaires_t));
     dicts->nbr_dictionnaires = 0;
@@ -157,8 +156,8 @@ Dictionnaires_t *initDictionnaires(char* chemin) {
             char chemin_complet[300];
             chemin_complet[0] = '\0';
             strcpy(chemin_complet, chemin);
-            if(chemin[strlen(chemin) -1] != '/') strcat(chemin_complet, "/");
-            strcat(chemin_complet,dir->d_name);
+            if (chemin[strlen(chemin) - 1] != '/') strcat(chemin_complet, "/");
+            strcat(chemin_complet, dir->d_name);
 
             Dictionnaire_t *dictionnaire;
             if ((dictionnaire = initDictionnaire(chemin_complet, dir->d_name)) == NULL) return NULL;
@@ -167,7 +166,7 @@ Dictionnaires_t *initDictionnaires(char* chemin) {
         }
     }
 
-    if(nbr_fichiers == 0) return NULL;
+    if (nbr_fichiers == 0) return NULL;
     closedir(repertoire);
     return dicts;
 }
@@ -187,7 +186,7 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
         }
     }
 
-    switch(dico1->langue){
+    switch (dico1->langue) {
         case FRANCAIS :
             dicts->francais = true;
             break;
@@ -207,7 +206,7 @@ Dictionnaires_t *ajouter_dictionnaire(Dictionnaires_t *dicts, Dictionnaire_t *di
 
 void freeDictionnaires(Dictionnaires_t *dicts) {
 
-    if(dicts){
+    if (dicts) {
         for (int i = 0; i < dicts->nbr_dictionnaires; i++) {
             if (dicts->dictionnaires[i]) {
                 freeDictionnaire(dicts->dictionnaires[i]);
