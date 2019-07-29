@@ -19,7 +19,7 @@ outils.o : outils.c outils.h
 	gcc $< -c -o $@ $(options)
 
 clean : 
-	rm -fr *.o tp2 alphabet.txt data *.sof
+	rm -fr *.o tp2 alphabet.txt data *.sof tp2.debug
 
 cleanguy :
 	make clean
