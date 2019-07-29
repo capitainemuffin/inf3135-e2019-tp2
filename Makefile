@@ -60,7 +60,7 @@ push :
 	git commit -m 'commit et push automatique'
 	git push origin master
 
-valgrind : tp2
+valgrind : tp2 data
 	valgrind ./tp2 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof -a data/
 
 
