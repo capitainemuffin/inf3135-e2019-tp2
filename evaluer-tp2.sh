@@ -27,10 +27,6 @@ for line in `cat ${correction}`; do
 	description=${line:7:22}
 	commande=${line:29};
 
-	#
-	#
-	# NE PAS OUBLIER D'AJOUTER TIMEOUT
-	#
 	eval $commande &> /dev/null
 	test $? -eq ${code_retour} && echo $index : réussi : ${points} pts && note=$((note + points)) || echo $index : echec; 
 	index=$((index + 1))
