@@ -21,7 +21,7 @@ void bruteforce(Arguments_t *arguments) {
         free(tmp);
     }
 
-    char *message_trouve = malloc(sizeof(char) * taille_message);
+    char *message_trouve = malloc(sizeof(char) * taille_message + 2);
     message_trouve[0] = '\0';
 
     for (int cle = 0; cle < nbr_cle; cle++) {
