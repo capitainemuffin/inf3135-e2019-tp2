@@ -166,6 +166,7 @@ void traitement_arguments(int argc, char **argv, Arguments_t *arguments) {
             case 'a' : {
 
                 if (i + 1 < argc) {
+                    if(arguments->alphabet) fclose(arguments->alphabet);
                     arguments->alphabet = get_alphabet(argv[i + 1]);
                     i++;
                 } else {

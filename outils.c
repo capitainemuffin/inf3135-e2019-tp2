@@ -124,9 +124,3 @@ int decaler_charactere(int old, int cle, FILE *fichier_alphabet) {
 
     return new;
 }
-
-
-
-
-
-
