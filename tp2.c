@@ -4,23 +4,78 @@
 
 void bruteforce(Arguments_t *arguments) {
 
-//    int nbr_cle = (int)get_taille_fichier(arguments->alphabet);
-//    unsigned long taille_message = get_taille_fichier(arguments->entree);
-//    int score_max = 0;
-//
-//    for(int i = 0; i <   nbr_cle ; i++){
-//
-//    }
-    for (int i = 0; i < arguments->dictionnaires->nbr_dictionnaires; i++) {
-        // pour chaque dictionnaire
-        for (unsigned long j = 0; j < arguments->dictionnaires->dictionnaires[i]->nbr_mots; j++) {
-            //pour chaque mot du dictionnaire
+    int nbr_cle = (int) get_taille_alphabet(arguments->alphabet) + 1;
+    int score_max = 0;
+    char *message_a_decoder = malloc(sizeof(char));
+    message_a_decoder[0] = '\0';
 
-            printf("%s\n", arguments->dictionnaires->dictionnaires[i]->mots[j]);
+    int old;
+    int taille_message = 0;
+    while ((old = fgetc(arguments->entree)) != EOF && (arguments->entree != stdin || old != '\n')) {
+        taille_message++;
+        char *tmp = malloc(sizeof(char) * 2);
+        tmp[1] = '\0';
+        tmp[0] = (char) old;
+        if(!realloc(message_a_decoder,sizeof(char) * taille_message)) exit(100);
+        strcat(message_a_decoder, tmp);
+        free(tmp);
+    }
 
+    char *message_trouve = malloc(sizeof(char) * taille_message);
+    message_trouve[0] = '\0';
+
+    for (int cle = 0; cle < nbr_cle; cle++) {
+
+        int score = 0;
+        char *tmp = malloc(sizeof(char) * taille_message);
+        tmp[0] = '\0';
+        for (int i = 0; i < taille_message; i++) {
+            char *tmp2 = malloc(sizeof(char) * 2);
+            tmp2[1] = '\0';
+            tmp2[0] = (char) decaler_charactere(message_a_decoder[i], cle, arguments->alphabet);
+            strcat(tmp, tmp2);
+            free(tmp2);
         }
 
+        char *message_decoder = malloc(sizeof(char) * taille_message);
+        message_decoder[0] = '\0';
+        strcpy(message_decoder, tmp);
+
+        char *token = strtok(tmp, " \n\t");
+        while (token != NULL) {
+            for (int i = 0; i < arguments->dictionnaires->nbr_dictionnaires; i++) {
+                // pour chaque dictionnaire
+                for (unsigned long j = 0; j < arguments->dictionnaires->dictionnaires[i]->nbr_mots; j++) {
+                    //pour chaque mot du dictionnaire
+                    if (arguments->dictionnaires->dictionnaires[i]->mots[j]) {
+                        //pcque seg fault
+                        if (strcmp(arguments->dictionnaires->dictionnaires[i]->mots[j], token) == 0) score++;
+                    }
+                }
+            }
+            token = strtok(NULL, " \n\t");
+        }
+
+        if (score_max < score) {
+            score_max = score;
+            strcpy(message_trouve, message_decoder);
+
+#ifdef DEBUG
+        printf("Score max : %d\n", score_max);
+        printf("Meilleur message pour le moment : %s\n", message_trouve);
+#endif
+        }
+
+        free(tmp);
     }
+
+    if (score_max == 0) {
+        freeArguments(arguments);
+        exit(50);
+    }
+
+    fprintf(arguments->sortie, "%s", message_trouve);
+    free(message_a_decoder);
 
 }
 

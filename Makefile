@@ -30,9 +30,12 @@ test : tp2
 	./tp2 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof
 	diff $(FICHIER)1.out res1.sof
 
-bruteforce : tp2
-	./tp2 -c $(CP) -d -l modele/ -i $(FICHIER)1.in -o res1.sof
-
+debug : tp2.c outils.c structure.c
+	gcc -c outils.c -o outils.o $(options) -DDEBUG
+	gcc -c structure.c -o structure.o $(options) -DDEBUG
+	gcc -c tp2.c -o tp2.o $(options) -DDEBUG
+	gcc -o tp2.debug outils.o structure.o tp2.o $(options) -DDEBUG
+	./tp2.debug -c $(CP) -b -l ./modele -i $(FICHIER)1.out -a ./data
 
 data :
 	curl https://www.github.com/guyfrancoeur/INF3135_E2019_TP/raw/master/crypto-data.zip -sLO -o crypto-data.zip
@@ -53,7 +56,6 @@ push :
 	git push origin master
 
 valgrind : 
-	cp $(FICHIER)1.alphabet alphabet.txt
-	valgrind ./tp2 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof
+	valgrind ./tp2 -c $(CP) $(shell cat $(FICHIER)1.action) -k $(shell cat $(FICHIER)1.cle) -i $(FICHIER)1.in -o res1.sof -a data/
 
 

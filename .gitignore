@@ -4,3 +4,5 @@ data/
 .idea/
 CMakeLists.txt
 cmake-build-debug/
+tp2.debug
+tp2
